@@ -1,19 +1,24 @@
-import DomoApi from "@/API/domoAPI";
-import "./index.css";
-import { useEffect } from "react";
+import HomePage from "./Home/HomePage";
+import "./index.css"
 
 const DefaultPage = () => {
-  const fetchCoffeeDataAPI = async () => {
-    await DomoApi.FetchDatasetRecords("CoffeeData").then(([coffeeDataFlow]) => {
-      console.log("CoffeeData", coffeeDataFlow);
-    });
-  };
-
-  useEffect(() => {
-    fetchCoffeeDataAPI();
-  }, []);
-
-  return <div>Hello</div>;
+  return (
+    <div>
+      <HomePage />
+    </div>
+  );
 };
 
 export default DefaultPage;
+
+
+
+  // const fetchCoffeeDataAPI = async () => {
+  //   await DomoApi.FetchDatasetRecords("CoffeeData").then(([coffeeDataFlow]) => {
+  //     console.log("CoffeeData", coffeeDataFlow);
+  //   });
+  // };
+
+  // useEffect(() => {
+  //   fetchCoffeeDataAPI();
+  // }, []);

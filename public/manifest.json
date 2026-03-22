@@ -12,6 +12,100 @@
       "fields": []
     }
   ],
+  "collections": [
+    {
+      "name": "FoodApp_Users",
+      "schema": {
+        "columns": [
+          { "name": "id", "type": "STRING" },
+          { "name": "firstName", "type": "STRING" },
+          { "name": "lastName", "type": "STRING" },
+          { "name": "email", "type": "STRING" },
+          { "name": "phone", "type": "STRING" },
+          { "name": "passwordHash", "type": "STRING" },
+          { "name": "authProvider", "type": "STRING" },
+          { "name": "providerId", "type": "STRING" },
+          { "name": "createdAt", "type": "STRING" },
+          { "name": "role", "type": "STRING" }
+        ]
+      },
+      "syncEnabled": true
+    },
+    {
+      "name": "FoodApp_Orders",
+      "schema": {
+        "columns": [
+          { "name": "id", "type": "STRING" },
+          { "name": "userId", "type": "STRING" },
+          { "name": "vendorId", "type": "STRING" },
+          { "name": "items", "type": "STRING" },
+          { "name": "totalAmount", "type": "STRING" },
+          { "name": "status", "type": "STRING" },
+          { "name": "createdAt", "type": "STRING" }
+        ]
+      },
+      "syncEnabled": true
+    },
+    {
+      "name": "FoodApp_Vendors",
+      "schema": {
+        "columns": [
+          { "name": "id", "type": "STRING" },
+          { "name": "name", "type": "STRING" },
+          { "name": "description", "type": "STRING" },
+          { "name": "image", "type": "STRING" },
+          { "name": "rating", "type": "STRING" },
+          { "name": "address", "type": "STRING" }
+        ]
+      },
+      "syncEnabled": true
+    },
+    {
+      "name": "FoodApp_Foods",
+      "schema": {
+        "columns": [
+          { "name": "id", "type": "STRING" },
+          { "name": "vendorId", "type": "STRING" },
+          { "name": "name", "type": "STRING" },
+          { "name": "description", "type": "STRING" },
+          { "name": "price", "type": "STRING" },
+          { "name": "image", "type": "STRING" },
+          { "name": "category", "type": "STRING" },
+          { "name": "isChefRecommended", "type": "STRING" }
+        ]
+      },
+      "syncEnabled": true
+    },
+    {
+      "name": "FoodApp_UserAddresses",
+      "schema": {
+        "columns": [
+          { "name": "id", "type": "STRING" },
+          { "name": "userId", "type": "STRING" },
+          { "name": "street", "type": "STRING" },
+          { "name": "city", "type": "STRING" },
+          { "name": "state", "type": "STRING" },
+          { "name": "zip", "type": "STRING" },
+          { "name": "country", "type": "STRING" }
+        ]
+      },
+      "syncEnabled": true
+    },
+    {
+      "name": "FoodApp_Reviews",
+      "schema": {
+        "columns": [
+          { "name": "id", "type": "STRING" },
+          { "name": "userId", "type": "STRING" },
+          { "name": "foodId", "type": "STRING" },
+          { "name": "rating", "type": "STRING" },
+          { "name": "comment", "type": "STRING" },
+          { "name": "createdAt", "type": "STRING" }
+        ]
+      },
+      "syncEnabled": true
+    }
+  ],
   "workflowMapping": [],
   "id": "913534c8-b60b-449a-9cc5-1ee2a6c7c233",
   "proxyId": "06d9ffe7-7606-4c3f-8918-81471ea3027d",

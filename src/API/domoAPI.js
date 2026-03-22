@@ -287,31 +287,6 @@ const partialupdateDocument = (collectionName, query, operation) => {
     });
 };
 
-const FetchDatasetRecords = async (dataset) => {
-  try {
-    const response = await domo.get(`/data/v1/${dataset}`).then((data) => {
-      return data;
-    });
-    return response;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
-};
-
-const GetDataQueryOperators = (alias, queryOperators = '') => {
-  const BASE_URL = '/data/v1';
-
-  const url = `${BASE_URL}/${alias}?${queryOperators}`;
-
-  return domo
-    .get(url)
-    .then((response) => response)
-    .catch((error) => {
-      console.error('Error fetching data:', error);
-      throw error;
-    });
-};
-
 const DomoApi = {
   GetCurrentUser,
   GetAllUser,
@@ -331,8 +306,6 @@ const DomoApi = {
   queryDocumentsWithAggregations,
   ListAllUsers,
   partialupdateDocument,
-  FetchDatasetRecords,
-  GetDataQueryOperators
 };
 
 export default DomoApi;

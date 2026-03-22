@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
 import DomoApi from "./domoAPI";
 
 export const UserContext = createContext();
@@ -54,3 +54,5 @@ export const UserProvider = ({ children }) => {
     </UserContext.Provider>
   );
 };
+
+export const useCurrentUser = () => useContext(UserContext);
