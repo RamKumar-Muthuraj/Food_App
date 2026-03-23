@@ -4,10 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
+import { useCurrentUser } from "@/API/currentUserContext";
+import { NAV_ITEMS } from "@/data/navigations";
+
+const getNavByRole = (role?: string) => {
+  const userRole = role || "GUEST";
+
+  return NAV_ITEMS.filter((item) => item.roles?.includes(userRole as any));
+};
 
 export function Header() {
   const location = useLocation();
-  const cartItemsCount = 3; // Mock cart count
+  const cartItemsCount = 3;
+  const { logout, role, currentUser } = useCurrentUser();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -47,36 +56,27 @@ export function Header() {
 
           {/* Navigation */}
           <nav className="hidden lg:flex items-center gap-6">
-            <Link
-              to="/"
-              className={`text-sm transition-all hover:text-primary ${
-                isActive("/") ? "text-primary" : "text-foreground"
-              }`}
-            >
-              Home
-            </Link>
-            <Link
-              to="/foods"
-              className={`text-sm transition-all hover:text-primary ${
-                isActive("/foods") ? "text-primary" : "text-foreground"
-              }`}
-            >
-              Explore
-            </Link>
-            <Link
-              to="/admin"
-              className={`text-sm transition-all hover:text-primary ${
-                isActive("/admin") ? "text-primary" : "text-foreground"
-              }`}
-            >
-              Admin
-            </Link>
+            {getNavByRole(role).map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`text-sm transition-all hover:text-primary ${
+                  isActive(item.path) ? "text-primary" : "text-foreground"
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))}
           </nav>
 
           {/* Actions */}
           <div className="flex items-center gap-2">
             <Link to="/cart">
-              <Button variant="ghost" size="icon" className="relative hover:bg-primary/10">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative hover:bg-primary/10"
+              >
                 <ShoppingCart className="w-5 h-5" />
                 {cartItemsCount > 0 && (
                   <Badge className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center p-0 bg-primary text-primary-foreground">
@@ -86,15 +86,25 @@ export function Header() {
               </Button>
             </Link>
             <Link to="/profile">
-              <Button variant="ghost" size="icon" className="hover:bg-primary/10">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:bg-primary/10"
+              >
                 <User className="w-5 h-5" />
               </Button>
             </Link>
-            <Link to="/login" className="hidden sm:block">
-              <Button className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity">
-                Sign In
+            {!currentUser ? (
+              <Link to="/login" className="hidden sm:block">
+                <Button className="bg-gradient-to-r from-primary to-accent">
+                  Sign In
+                </Button>
+              </Link>
+            ) : (
+              <Button variant="outline" onClick={logout}>
+                Logout
               </Button>
-            </Link>
+            )}
             <Button variant="ghost" size="icon" className="lg:hidden">
               <Menu className="w-5 h-5" />
             </Button>

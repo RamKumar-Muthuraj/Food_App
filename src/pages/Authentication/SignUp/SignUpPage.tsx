@@ -16,6 +16,9 @@ import {
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "@/utils/Firebase/firebase";
 import { useNavigate } from "react-router-dom";
+import bcrypt from "bcryptjs";
+import { AuthRole, CollectionName, ProviderName } from "@/data/mockData";
+import { googleAuth } from "@/utils/GoogleOAuth/googleOauth";
 
 export function SignUpPage() {
   const [formData, setFormData] = useState<LoginFieldProps>({
@@ -24,6 +27,7 @@ export function SignUpPage() {
     email: "",
     password: "",
     phone: "",
+    role: "user",
     is_termsCheck: false,
   });
 
@@ -49,7 +53,9 @@ export function SignUpPage() {
       return;
     }
 
-    const existingUsers = (await DomoApi.ListDocuments("FoodApp_Users")) as {
+    const existingUsers = (await DomoApi.ListDocuments(
+      CollectionName.FOODAPP_USERS,
+    )) as {
       content: LoginFieldProps;
     }[];
 
@@ -71,46 +77,30 @@ export function SignUpPage() {
       return;
     }
 
-    await DomoApi.CreateDocument("FoodApp_Users", formData);
+    const passwordHash = await bcrypt.hash(formData.password, 10);
+
+    const newUser = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      phone: formData.phone,
+      passwordHash,
+      authProvider: ProviderName.LOCAL,
+      providerId: "",
+      createdAt: new Date().toISOString(),
+      role: AuthRole.USER,
+    };
+
+    await DomoApi.CreateDocument(CollectionName.FOODAPP_USERS, newUser);
+
+    navigate("/login");
   };
 
   const handleGoogleSignUp = async () => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-
-      if (!result?.user) return;
-
-      const user = result.user;
-
-      const userData: LoginFieldProps = {
-        firstName: user.displayName?.split(" ")[0] || "",
-        lastName: user.displayName?.split(" ")[1] || "",
-        email: user.email || "",
-        phone: "",
-        password: "",
-        is_termsCheck: true,
-      };
-
-      console.log("Google user:", userData);
-
-      const existingUsers = (await DomoApi.ListDocuments("FoodApp_Users")) as {
-        content: LoginFieldProps;
-      }[];
-
-      const exists = existingUsers.some(
-        (u) => u.content?.email === userData.email,
-      );
-
-      if (!exists) {
-        await DomoApi.CreateDocument("FoodApp_Users", userData);
-      }
-
-      navigate("/");
-    } catch (error) {
-      console.error("Google login error", error);
-    }
+    const user = await googleAuth();
+    if (user) navigate("/");
   };
-  
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">

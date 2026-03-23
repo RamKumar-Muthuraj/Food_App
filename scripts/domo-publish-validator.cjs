@@ -4,14 +4,74 @@ const path = require("path");
 // ✅ Allowed extensions
 const allowedExtensions = new Set([
   // General files
-  "bash","bat","clj","cljc","cljs","cmd","css","csv","edn","go","gql","graphql",
-  "html","java","js","json","jsx","kt","kts","less","markdown","md","php","ps1",
-  "ps1xml","psd1","psm1","py","r","rb","rda","rdata","rds","rhistory","rmarkdown",
-  "rmd","rprofile","rproj","rs","scss","sh","sql","swift","toml","ts","tsv",
-  "tsx","txt","wasm","wast","wat","xml","yaml","yml","fontf",
+  "bash",
+  "bat",
+  "clj",
+  "cljc",
+  "cljs",
+  "cmd",
+  "css",
+  "csv",
+  "edn",
+  "go",
+  "gql",
+  "graphql",
+  "html",
+  "java",
+  "js",
+  "json",
+  "jsx",
+  "kt",
+  "kts",
+  "less",
+  "markdown",
+  "md",
+  "php",
+  "ps1",
+  "ps1xml",
+  "psd1",
+  "psm1",
+  "py",
+  "r",
+  "rb",
+  "rda",
+  "rdata",
+  "rds",
+  "rhistory",
+  "rmarkdown",
+  "rmd",
+  "rprofile",
+  "rproj",
+  "rs",
+  "scss",
+  "sh",
+  "sql",
+  "swift",
+  "toml",
+  "ts",
+  "tsv",
+  "tsx",
+  "txt",
+  "wasm",
+  "wast",
+  "wat",
+  "xml",
+  "yaml",
+  "yml",
+  "fontf",
 
   // Images
-  "bmp","eps","gif","ico","jpeg","jpg","png","svg","tif","tiff","webp"
+  "bmp",
+  "eps",
+  "gif",
+  "ico",
+  "jpeg",
+  "jpg",
+  "png",
+  "svg",
+  "tif",
+  "tiff",
+  "webp",
 ]);
 
 // ✅ Folders to check
@@ -61,8 +121,10 @@ if (!checkedAtLeastOne) {
 // 🚨 Result
 if (invalidFiles.length > 0) {
   console.error("\n❌ Deployment Blocked! Invalid files found:\n");
-  invalidFiles.forEach(f => console.error(" -", f));
+  invalidFiles.forEach((f) => console.error(" -", f));
   process.exit(1);
 } else {
-  console.log("\n✅ All files are valid in build folders. Ready for deployment!");
+  console.log(
+    "\n✅ All files are valid in build folders. Ready for deployment!",
+  );
 }

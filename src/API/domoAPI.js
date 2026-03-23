@@ -83,11 +83,12 @@ const UpdateDocument = (collectionName, documentId, document) => {
       throw error;
     });
 };
+
 const queryDocumentsWithAggregations = (
   collectionName,
   query = {},
   aggregations = {},
-  options = {}
+  options = {},
 ) => {
   // Base URL for the query
   let url = `${BASE_URL}/collections/${collectionName}/documents/query?`;
@@ -169,9 +170,9 @@ const QueryDocument = (collectionName, query = {}, options = {}) => {
 // Query documents based on a specific date range
 const queryDocumentsByDate = (collectionName, dateString, options = {}) => {
   const query = {
-    "createdOn": {
-      "$lte": { "$date": dateString }
-    }
+    createdOn: {
+      $lte: { $date: dateString },
+    },
   };
   return QueryDocument(collectionName, query, options);
 };
@@ -179,7 +180,7 @@ const queryDocumentsByDate = (collectionName, dateString, options = {}) => {
 const BulkDeleteDocuments = (collectionName, ids) => {
   return domo
     .delete(
-      `${BASE_URL}/collections/${collectionName}/documents/bulk?ids=${ids}`
+      `${BASE_URL}/collections/${collectionName}/documents/bulk?ids=${ids}`,
     )
     .then((response) => response)
     .catch((error) => {
@@ -251,11 +252,11 @@ const GetFile = (fileId, revisionId) => {
 const ListAllUsers = async (
   includeDetails = false,
   limit = 100,
-  offset = 0
+  offset = 0,
 ) => {
   try {
     const response = await domo.get(
-      `/domo/users/v1?includeDetails=${includeDetails}&limit=${limit}&offset=${offset}`
+      `/domo/users/v1?includeDetails=${includeDetails}&limit=${limit}&offset=${offset}`,
     );
     return response;
   } catch (error) {
@@ -275,7 +276,7 @@ const partialupdateDocument = (collectionName, query, operation) => {
   return domo
     .put(
       `${BASE_URL}/collections/${collectionName}/documents/update`,
-      requestBody
+      requestBody,
     )
     .then((response) => {
       console.log("Document updated successfully:", response);

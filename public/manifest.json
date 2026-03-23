@@ -22,7 +22,7 @@
           { "name": "lastName", "type": "STRING" },
           { "name": "email", "type": "STRING" },
           { "name": "phone", "type": "STRING" },
-          { "name": "passwordHash", "type": "STRING" },
+          { "name": "password", "type": "STRING" },
           { "name": "authProvider", "type": "STRING" },
           { "name": "providerId", "type": "STRING" },
           { "name": "createdAt", "type": "STRING" },
@@ -55,7 +55,10 @@
           { "name": "description", "type": "STRING" },
           { "name": "image", "type": "STRING" },
           { "name": "rating", "type": "STRING" },
-          { "name": "address", "type": "STRING" }
+          { "name": "phone", "type": "STRING"},
+          { "name": "address", "type": "STRING" },
+          { "name": "location", "type": "STRING"},
+          { "name": "isTopChoice", "type":"STRING"}
         ]
       },
       "syncEnabled": true
@@ -71,7 +74,9 @@
           { "name": "price", "type": "STRING" },
           { "name": "image", "type": "STRING" },
           { "name": "category", "type": "STRING" },
-          { "name": "isChefRecommended", "type": "STRING" }
+          { "name": "isChefRecommended", "type": "STRING" },
+          { "name": "isTrending", "type": "STRING"},
+          { "name": "isShowAsSlide", "type": "STRING"}
         ]
       },
       "syncEnabled": true
@@ -86,7 +91,8 @@
           { "name": "city", "type": "STRING" },
           { "name": "state", "type": "STRING" },
           { "name": "zip", "type": "STRING" },
-          { "name": "country", "type": "STRING" }
+          { "name": "country", "type": "STRING" },
+          { "name": "isDefault", "type":"STRING"}
         ]
       },
       "syncEnabled": true
@@ -99,6 +105,7 @@
           { "name": "userId", "type": "STRING" },
           { "name": "foodId", "type": "STRING" },
           { "name": "rating", "type": "STRING" },
+          { "name": "isHelpful", "type": "STRING"},
           { "name": "comment", "type": "STRING" },
           { "name": "createdAt", "type": "STRING" }
         ]
