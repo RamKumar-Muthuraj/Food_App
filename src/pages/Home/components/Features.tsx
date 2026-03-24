@@ -5,8 +5,29 @@ import { featuredRestaurants } from "@/data/mockData";
 import { ArrowRight, Clock, Star } from "lucide-react";
 import { Link } from "react-router";
 import { motion } from "framer-motion";
-
+import { useEffect, useState } from "react";
+import { VendorService } from "@/service/vendor.service";
+import { Vendor } from "@/types/Vendor.types";
+type DomoDoc<T> = { id: string; content: T };
 export default function Features() {
+  const [vendors, setVendors] = useState<Vendor[]>([]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      const res = ((await VendorService.getAll()) as DomoDoc<Vendor>[]) ?? [];
+
+      const flattened = res.map((v: any) => ({
+        docId: v.id,
+        ...v.content,
+      }));
+
+      const top: any = flattened.filter((v: any) => v.isTopChoice === "true");
+
+      setVendors(top);
+    };
+
+    fetch();
+  }, []);
   return (
     <section className="container mx-auto px-4 py-16">
       <div className="flex items-center justify-between mb-12">
@@ -27,9 +48,9 @@ export default function Features() {
         </Link>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {featuredRestaurants.map((restaurant, index) => (
+        {vendors.map((restaurant, index) => (
           <motion.div
-            key={restaurant.id}
+            key={index}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
@@ -44,7 +65,7 @@ export default function Features() {
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                   <Badge className="absolute top-4 left-4 bg-linear-to-r from-primary to-accent">
-                    {restaurant.badge}
+                    {restaurant.cuisine}
                   </Badge>
                 </div>
                 <div className="p-4">

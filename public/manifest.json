@@ -38,6 +38,7 @@
           { "name": "id", "type": "STRING" },
           { "name": "userId", "type": "STRING" },
           { "name": "vendorId", "type": "STRING" },
+          { "name": "addressId", "type":"STRING"},
           { "name": "items", "type": "STRING" },
           { "name": "totalAmount", "type": "STRING" },
           { "name": "status", "type": "STRING" },
@@ -55,10 +56,12 @@
           { "name": "description", "type": "STRING" },
           { "name": "image", "type": "STRING" },
           { "name": "rating", "type": "STRING" },
-          { "name": "phone", "type": "STRING"},
+          { "name": "phone", "type": "STRING" },
           { "name": "address", "type": "STRING" },
-          { "name": "location", "type": "STRING"},
-          { "name": "isTopChoice", "type":"STRING"}
+          { "name": "type", "type": "STRING" },
+          { "name": "deliveryTime", "type": "STRING" },
+          { "name": "location", "type": "STRING" },
+          { "name": "isTopChoice", "type": "STRING" }
         ]
       },
       "syncEnabled": true
@@ -75,8 +78,9 @@
           { "name": "image", "type": "STRING" },
           { "name": "category", "type": "STRING" },
           { "name": "isChefRecommended", "type": "STRING" },
-          { "name": "isTrending", "type": "STRING"},
-          { "name": "isShowAsSlide", "type": "STRING"}
+          { "name": "isVeg", "type": "STRING" },
+          { "name": "isTrending", "type": "STRING" },
+          { "name": "isShowAsSlide", "type": "STRING" }
         ]
       },
       "syncEnabled": true
@@ -92,7 +96,7 @@
           { "name": "state", "type": "STRING" },
           { "name": "zip", "type": "STRING" },
           { "name": "country", "type": "STRING" },
-          { "name": "isDefault", "type":"STRING"}
+          { "name": "isDefault", "type": "STRING" }
         ]
       },
       "syncEnabled": true
@@ -105,8 +109,23 @@
           { "name": "userId", "type": "STRING" },
           { "name": "foodId", "type": "STRING" },
           { "name": "rating", "type": "STRING" },
-          { "name": "isHelpful", "type": "STRING"},
+          { "name": "isHelpful", "type": "STRING" },
           { "name": "comment", "type": "STRING" },
+          { "name": "createdAt", "type": "STRING" }
+        ]
+      },
+      "syncEnabled": true
+    },
+    {
+      "name": "FoodApp_Cart",
+      "schema": {
+        "columns": [
+          { "name": "id", "type": "STRING" },
+          { "name": "userId", "type": "STRING" },
+          { "name": "foodId", "type": "STRING" },
+          { "name": "vendorId", "type": "STRING" },
+          { "name": "quantity", "type": "STRING" },
+          { "name": "price", "type": "STRING" },
           { "name": "createdAt", "type": "STRING" }
         ]
       },

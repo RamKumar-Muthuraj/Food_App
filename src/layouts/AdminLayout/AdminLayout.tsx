@@ -7,7 +7,8 @@ import {
   Settings, 
   LogOut,
   Menu,
-  X
+  X,
+  ChefHat
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -16,14 +17,14 @@ export function AdminLayout() {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const navItems = [
-    { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
-    { icon: ShoppingBag, label: "Orders", path: "/admin/orders" },
-    { icon: Users, label: "Users", path: "/admin/users" },
-    { icon: Store, label: "Vendors", path: "/admin/vendors" },
-    { icon: Settings, label: "Settings", path: "/admin/settings" },
-  ];
-
+const navItems = [
+  { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
+  { icon: ShoppingBag, label: "Orders", path: "/admin/orders" },
+  { icon: Users, label: "Users", path: "/admin/users" },
+  { icon: ChefHat, label: "Foods", path: "/admin/foods" }, 
+  { icon: Store, label: "Vendors", path: "/admin/vendors" },
+  { icon: Settings, label: "Settings", path: "/admin/settings" },
+];
   return (
     <div className="min-h-screen bg-background">
       {/* Mobile Menu Button */}

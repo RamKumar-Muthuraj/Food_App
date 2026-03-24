@@ -78,6 +78,7 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+
 @theme inline {
   --font-heading: "Playfair Display", serif;
   --color-sidebar-ring: var(--sidebar-ring);
@@ -231,4 +232,22 @@ h3 {
 
 * {
   transition: all 0.2s ease-in-out;
+}
+
+
+.custom-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted));
+  border-radius: 999px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
 }

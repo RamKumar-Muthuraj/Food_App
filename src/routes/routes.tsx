@@ -9,10 +9,13 @@ import {
   ProfilePage,
   AdminDashboard,
   NotFoundPage,
+  AdminFood,
 } from "@/pages";
+
 import { createBrowserRouter } from "react-router";
 import { RootLayout } from "@/layouts/RootLayout/RootLayout";
 import { AdminLayout } from "@/layouts/AdminLayout/AdminLayout";
+import AdminVendors from "@/pages/AdminDashboard/Vendor";
 
 export const router = createBrowserRouter([
   {
@@ -29,10 +32,19 @@ export const router = createBrowserRouter([
       { path: "profile", Component: ProfilePage },
     ],
   },
+
   {
     path: "/admin",
     Component: AdminLayout,
-    children: [{ index: true, Component: AdminDashboard }],
+    children: [
+      { index: true, Component: AdminDashboard },
+
+      { path: "foods", Component: AdminFood },
+      // { path: "orders", Component: AdminOrdersPage },
+      // { path: "users", Component: AdminUsersPage },
+      { path: "vendors", Component: AdminVendors },
+    ],
   },
+
   { path: "*", Component: NotFoundPage },
 ]);

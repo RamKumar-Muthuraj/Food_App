@@ -5,8 +5,29 @@ import { ChefHat, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router";
 import { Card } from "@/components/ui/card";
-
+import { useEffect, useState } from "react";
+import { FoodService } from "@/service/food.service";
+import { Food } from "@/types/Food.types";
+type DomoDoc<T> = { id: string; content: T };
 export default function ChefRecommendations() {
+  const [foods, setFoods] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchFoods = async () => {
+      const res = ((await FoodService.getAll()) as DomoDoc<Food>[]) ?? [];
+
+      const flattened = res.map((f: any) => ({
+        docId: f.id,
+        ...f.content,
+      }));
+
+      const chef = flattened.filter((f: any) => f.isChefRecommended === "true");
+
+      setFoods(chef);
+    };
+
+    fetchFoods();
+  }, []);
   return (
     <section className="container mx-auto px-4 py-16">
       <div className="text-center mb-12">
@@ -20,7 +41,7 @@ export default function ChefRecommendations() {
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {trendingFoods.slice(0, 3).map((food, index) => (
+        {foods.slice(0, 3).map((food, index) => (
           <motion.div
             key={food.id}
             initial={{ opacity: 0, y: 20 }}

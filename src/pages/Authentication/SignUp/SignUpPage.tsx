@@ -84,7 +84,7 @@ export function SignUpPage() {
       lastName: formData.lastName,
       email: formData.email,
       phone: formData.phone,
-      passwordHash,
+      password: passwordHash,
       authProvider: ProviderName.LOCAL,
       providerId: "",
       createdAt: new Date().toISOString(),

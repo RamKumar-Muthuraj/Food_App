@@ -5,8 +5,11 @@ export { default as FoodDetailPage } from "./FoodDetailPage/FoodDetailPage";
 export { default as CartPage } from "./CartPage/CartPage";
 export { default as ProfilePage } from "./ProfilePage/ProfilePage";
 
-export {  LoginPage } from "./Authentication/Login/LoginPage";
-export {  SignUpPage } from "./Authentication/SignUp/SignUpPage";
+export { LoginPage } from "./Authentication/Login/LoginPage";
+export { SignUpPage } from "./Authentication/SignUp/SignUpPage";
 
 export { AdminDashboard } from "./AdminDashboard/AdminDashboard";
+export { default as AdminFood } from "./AdminDashboard/Food/index";
+
+
 export { NotFoundPage } from "./NotFoundPage/NotFoundPage";

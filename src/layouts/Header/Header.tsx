@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { useCurrentUser } from "@/API/currentUserContext";
 import { NAV_ITEMS } from "@/data/navigations";
+import { selectCartCount } from "@/store/FoodCart/actions";
+import { useSelector } from "react-redux";
 
 const getNavByRole = (role?: string) => {
   const userRole = role || "GUEST";
@@ -15,7 +17,7 @@ const getNavByRole = (role?: string) => {
 
 export function Header() {
   const location = useLocation();
-  const cartItemsCount = 3;
+  const cartItemsCount = useSelector(selectCartCount);
   const { logout, role, currentUser } = useCurrentUser();
 
   const isActive = (path: string) => location.pathname === path;

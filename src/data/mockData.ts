@@ -5,6 +5,7 @@ export const CollectionName = {
   FOODAPP_FOODS: "FoodApp_Foods",
   FOODAPP_ADDRESSES: "FoodApp_UserAddresses",
   FOODAPP_REVIEWS: "FoodApp_Reviews",
+  FOODAPP_CART: "FoodApp_Cart",
 } as const;
 
 export const ProviderName = {
@@ -424,4 +425,142 @@ export const recentOrders = [
   },
 ];
 
-export const TitleName = [];
+const mockVendors = [
+  {
+    id: "v1",
+    name: "Golden Palace",
+    description: "Authentic Indian cuisine",
+    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4",
+    rating: "4.8",
+    phone: "9876543210",
+    address: "T Nagar, Chennai",
+    type: "Restaurant",
+    deliveryTime: "30-40 mins",
+    location: "Chennai",
+    isTopChoice: "true",
+  },
+  {
+    id: "v2",
+    name: "Dragon Wok",
+    description: "Chinese street food",
+    image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5",
+    rating: "4.6",
+    phone: "9123456789",
+    address: "Indiranagar, Bangalore",
+    type: "Restaurant",
+    deliveryTime: "25-35 mins",
+    location: "Bangalore",
+    isTopChoice: "false",
+  },
+];
+
+const mockFoods = [
+  {
+    id: "f1",
+    vendorId: "v1",
+    name: "Butter Chicken",
+    description: "Creamy rich butter chicken",
+    price: "250",
+    image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398",
+    category: "Indian",
+    isChefRecommended: "true",
+    isVeg: "false",
+    isTrending: "true",
+    isShowAsSlide: "true",
+  },
+  {
+    id: "f2",
+    vendorId: "v2",
+    name: "Veg Hakka Noodles",
+    description: "Spicy veg noodles",
+    price: "180",
+    image: "https://images.unsplash.com/photo-1612929633738-8fe44f7ec841",
+    category: "Chinese",
+    isChefRecommended: "false",
+    isVeg: "true",
+    isTrending: "true",
+    isShowAsSlide: "false",
+  },
+];
+
+const mockOrders = [
+  {
+    id: "o1",
+    userId: "u1",
+    vendorId: "v1",
+    items: JSON.stringify([{ foodId: "f1", qty: 2 }]),
+    totalAmount: "500",
+    status: "DELIVERED",
+    createdAt: "2026-03-23",
+  },
+  {
+    id: "o2",
+    userId: "u2",
+    vendorId: "v2",
+    items: JSON.stringify([{ foodId: "f2", qty: 1 }]),
+    totalAmount: "180",
+    status: "PLACED",
+    createdAt: "2026-03-23",
+  },
+];
+
+const mockAddresses = [
+  {
+    id: "a1",
+    userId: "u1",
+    street: "12 Gandhi Street",
+    city: "Chennai",
+    state: "Tamil Nadu",
+    zip: "600001",
+    country: "India",
+    isDefault: "true",
+  },
+  {
+    id: "a2",
+    userId: "u2",
+    street: "45 MG Road",
+    city: "Bangalore",
+    state: "Karnataka",
+    zip: "560001",
+    country: "India",
+    isDefault: "true",
+  },
+];
+
+const mockReviews = [
+  {
+    id: "r1",
+    userId: "u1",
+    foodId: "f1",
+    rating: "5",
+    isHelpful: "true",
+    comment: "Amazing taste and quality!",
+    createdAt: "2026-03-23",
+  },
+  {
+    id: "r2",
+    userId: "u2",
+    foodId: "f1",
+    rating: "4",
+    isHelpful: "false",
+    comment: "Good but slightly spicy",
+    createdAt: "2026-03-22",
+  },
+  {
+    id: "r3",
+    userId: "u1",
+    foodId: "f2",
+    rating: "4",
+    isHelpful: "true",
+    comment: "Very tasty noodles",
+    createdAt: "2026-03-23",
+  },
+];
+
+export const mockDatabase = {
+  vendors: mockVendors,
+  foods: mockFoods,
+  orders: mockOrders,
+  addresses: mockAddresses,
+  reviews: mockReviews,
+};

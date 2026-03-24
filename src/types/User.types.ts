@@ -10,3 +10,27 @@ export type UserModel = {
   createdAt: string;
   role: "USER" | "ADMIN";
 };
+
+
+export type UserAddress = {
+  docId?: string; 
+  id: string;
+  userId: string;
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+  isDefault: "true" | "false";
+};
+
+
+export type Address = {
+  docId?: string;
+  id?: string;
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  isDefault: string;
+};

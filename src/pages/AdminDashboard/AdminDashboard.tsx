@@ -1,10 +1,28 @@
-import { TrendingUp, TrendingDown, DollarSign, ShoppingBag, Users, Store, Clock, CheckCircle, XCircle, Package } from "lucide-react";
+import {
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  ShoppingBag,
+  Users,
+  Store,
+  Clock,
+  CheckCircle,
+  XCircle,
+  Package,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import { adminStats, recentOrders } from "@/data/mockData";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export function AdminDashboard() {
   const getStatusColor = (status: string) => {
@@ -38,7 +56,9 @@ export function AdminDashboard() {
       {/* Header */}
       <div>
         <h1 className="text-4xl font-bold mb-2">Dashboard</h1>
-        <p className="text-muted-foreground text-lg">Welcome back! Here's what's happening today.</p>
+        <p className="text-muted-foreground text-lg">
+          Welcome back! Here's what's happening today.
+        </p>
       </div>
 
       {/* Stats Grid */}
@@ -52,13 +72,27 @@ export function AdminDashboard() {
           >
             <Card className="p-6 border-primary/10 hover:border-primary/20 transition-all hover:shadow-lg hover:shadow-primary/10">
               <div className="flex items-start justify-between mb-4">
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                  {stat.label === "Total Revenue" && <DollarSign className="w-6 h-6 text-primary" />}
-                  {stat.label === "Active Orders" && <ShoppingBag className="w-6 h-6 text-primary" />}
-                  {stat.label === "Total Users" && <Users className="w-6 h-6 text-primary" />}
-                  {stat.label === "Restaurants" && <Store className="w-6 h-6 text-primary" />}
+                <div className="w-12 h-12 rounded-lg bg-linear-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                  {stat.label === "Total Revenue" && (
+                    <DollarSign className="w-6 h-6 text-primary" />
+                  )}
+                  {stat.label === "Active Orders" && (
+                    <ShoppingBag className="w-6 h-6 text-primary" />
+                  )}
+                  {stat.label === "Total Users" && (
+                    <Users className="w-6 h-6 text-primary" />
+                  )}
+                  {stat.label === "Restaurants" && (
+                    <Store className="w-6 h-6 text-primary" />
+                  )}
                 </div>
-                <Badge className={stat.trend === "up" ? "bg-accent/20 text-accent" : "bg-destructive/20 text-destructive"}>
+                <Badge
+                  className={
+                    stat.trend === "up"
+                      ? "bg-accent/20 text-accent"
+                      : "bg-destructive/20 text-destructive"
+                  }
+                >
                   {stat.trend === "up" ? (
                     <TrendingUp className="w-3 h-3 mr-1" />
                   ) : (
@@ -68,7 +102,9 @@ export function AdminDashboard() {
                 </Badge>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground mb-1">{stat.label}</p>
+                <p className="text-sm text-muted-foreground mb-1">
+                  {stat.label}
+                </p>
                 <p className="text-3xl font-bold">{stat.value}</p>
               </div>
             </Card>
@@ -82,9 +118,14 @@ export function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold mb-1">Recent Orders</h2>
-              <p className="text-sm text-muted-foreground">Latest orders from your platform</p>
+              <p className="text-sm text-muted-foreground">
+                Latest orders from your platform
+              </p>
             </div>
-            <Button variant="outline" className="border-primary/30 hover:bg-primary/10">
+            <Button
+              variant="outline"
+              className="border-primary/30 hover:bg-primary/10"
+            >
               View All Orders
             </Button>
           </div>
@@ -114,7 +155,9 @@ export function AdminDashboard() {
                   <TableCell className="font-medium">{order.id}</TableCell>
                   <TableCell>{order.customer}</TableCell>
                   <TableCell>{order.restaurant}</TableCell>
-                  <TableCell className="font-semibold text-primary">{order.amount}</TableCell>
+                  <TableCell className="font-semibold text-primary">
+                    {order.amount}
+                  </TableCell>
                   <TableCell>
                     <Badge className={getStatusColor(order.status)}>
                       <span className="flex items-center gap-1">
@@ -123,9 +166,15 @@ export function AdminDashboard() {
                       </span>
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">{order.time}</TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {order.time}
+                  </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="sm" className="hover:bg-primary/10">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="hover:bg-primary/10"
+                    >
                       View
                     </Button>
                   </TableCell>
@@ -140,12 +189,14 @@ export function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="p-6 border-primary/10 hover:border-primary/20 transition-all cursor-pointer group">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-12 h-12 rounded-lg bg-linear-to-br from-primary/20 to-accent/20 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Users className="w-6 h-6 text-primary" />
             </div>
             <div>
               <h3 className="font-semibold mb-1">Manage Users</h3>
-              <p className="text-sm text-muted-foreground">View and edit user accounts</p>
+              <p className="text-sm text-muted-foreground">
+                View and edit user accounts
+              </p>
             </div>
           </div>
         </Card>
@@ -157,7 +208,9 @@ export function AdminDashboard() {
             </div>
             <div>
               <h3 className="font-semibold mb-1">Manage Vendors</h3>
-              <p className="text-sm text-muted-foreground">Approve and manage restaurants</p>
+              <p className="text-sm text-muted-foreground">
+                Approve and manage restaurants
+              </p>
             </div>
           </div>
         </Card>
@@ -169,7 +222,9 @@ export function AdminDashboard() {
             </div>
             <div>
               <h3 className="font-semibold mb-1">View Reports</h3>
-              <p className="text-sm text-muted-foreground">Analytics and insights</p>
+              <p className="text-sm text-muted-foreground">
+                Analytics and insights
+              </p>
             </div>
           </div>
         </Card>
