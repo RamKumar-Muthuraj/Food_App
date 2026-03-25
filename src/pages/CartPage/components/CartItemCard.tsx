@@ -15,7 +15,10 @@ export default function CartItemCard({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -30 }}
     >
-      <div className="bg-neutral-900 border border-white/10 rounded-2xl p-4 flex items-center gap-4">
+      <div
+        className="bg-neutral-900 border border-white/10 rounded-2xl p-3 sm:p-4 
+flex flex-col sm:flex-row gap-3 sm:gap-4"
+      >
         {/* Image */}
         <div className="w-20 h-20 shrink-0 rounded-xl overflow-hidden">
           <img
@@ -63,7 +66,10 @@ export default function CartItemCard({
         </div>
 
         {/* Right */}
-        <div className="flex flex-col items-end justify-between h-20 shrink-0">
+        <div
+          className="flex sm:flex-col items-center sm:items-end 
+justify-between w-full sm:w-auto mt-2 sm:mt-0"
+        >
           <button
             title="remove"
             onClick={() => onRemove(item)}

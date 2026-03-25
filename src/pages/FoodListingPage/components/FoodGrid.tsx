@@ -2,33 +2,57 @@ import { useEffect, useState } from "react";
 import FoodCard from "./FoodCard";
 import { FoodService } from "@/service/food.service";
 import { Food } from "@/types/Food.types";
+import { VendorService } from "@/service/vendor.service";
+import { ReviewService } from "@/service/review.service";
 type DomoDoc<T> = { id: string; content: T };
-export default function FoodGrid({ priceRange, selectedCategories, setLoading }: any) {
-
+export default function FoodGrid({
+  priceRange,
+  selectedCategories,
+  setLoading,
+  setCategories,
+}: any) {
   const [foods, setFoods] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchFoods = async () => {
+    const fetchAll = async () => {
       setLoading(true);
-      const res = ((await FoodService.getAll()) as DomoDoc<Food>[]) ?? [];
-      
-      const flattened = res.map((f:any)=>({
+      const [foodsRes, vendorsRes, reviewsRes] = await Promise.all([
+        FoodService.getAll(),
+        VendorService.getAll(),
+        ReviewService.getAll(),
+      ]);
+
+      const vendorMap = (vendorsRes as any[]).reduce((acc: any, v: any) => {
+        acc[v.id] = v.content.rating;
+        return acc;
+      }, {});
+
+      const reviewMap = (reviewsRes as any[]).reduce((acc: any, r: any) => {
+        const foodId = r.content.foodId;
+        acc[foodId] = (acc[foodId] || 0) + 1;
+        return acc;
+      }, {});
+
+      const foods = (foodsRes as any[]).map((f: any) => ({
         docId: f.id,
-        ...f.content
+        ...f.content,
+        rating: vendorMap[f.content.vendorId] || 0,
+        reviews: reviewMap[f.content.id] || 0,
       }));
 
-      setFoods(flattened);
+      const unique = [...new Set(foods.map((f: any) => f.category))];
+      setCategories(unique);
       setLoading(false);
+      setFoods(foods);
     };
 
-    fetchFoods();
+    fetchAll();
   }, []);
 
   const filteredFoods = foods.filter((food) => {
     const price = Number(food.price);
 
-    const priceMatch =
-      price >= priceRange[0] && price <= priceRange[1];
+    const priceMatch = price >= priceRange[0] && price <= priceRange[1];
 
     const categoryMatch =
       selectedCategories.length === 0 ||

@@ -40,6 +40,7 @@ export const cartSlice = createSlice({
       );
       if (item && item.quantity > 1) item.quantity -= 1;
     },
+    
 
     clearCart: (state) => {
       state.items = [];

@@ -8,33 +8,12 @@ import { Food } from "@/types/Food.types";
 type DomoDoc<T> = { id: string; content: T };
 
 export default function FiltersSidebar({
+  categories,
   priceRange,
   setPriceRange,
   selectedCategories,
   setSelectedCategories,
 }: any) {
-
-  // categories are strings
-  const [categories, setCategories] = useState<string[]>([]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const res =
-        ((await FoodService.getAll()) as DomoDoc<Food>[]) ?? [];
-
-      const flattened = res.map((f) => ({
-        ...f.content,
-      }));
-
-      const unique = [
-        ...new Set(flattened.map((f) => f.category)),
-      ];
-
-      setCategories(unique);
-    };
-
-    fetchCategories();
-  }, []);
 
   const toggleCategory = (cat: string) => {
     if (selectedCategories.includes(cat)) {
@@ -59,7 +38,7 @@ export default function FiltersSidebar({
           <h4 className="font-semibold mb-3">Categories</h4>
 
           <div className="space-y-2">
-            {categories.map((category) => (
+            {categories.map((category : any) => (
               <div
                 key={category}
                 className="flex items-center space-x-2"

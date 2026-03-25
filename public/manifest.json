@@ -130,6 +130,15 @@
         ]
       },
       "syncEnabled": true
+    },
+    {
+      "name": "NewSeltter",
+      "schema":{
+        "columns": [
+          {"name": "id", "type":"STRING"},
+          {"name": "email", "type":"STRING"}
+        ]
+      }
     }
   ],
   "workflowMapping": [],

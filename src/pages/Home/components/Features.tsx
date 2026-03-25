@@ -8,26 +8,63 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { VendorService } from "@/service/vendor.service";
 import { Vendor } from "@/types/Vendor.types";
+import { ReviewService } from "@/service/review.service";
+import { FoodService } from "@/service/food.service";
+
 type DomoDoc<T> = { id: string; content: T };
 export default function Features() {
   const [vendors, setVendors] = useState<Vendor[]>([]);
 
   useEffect(() => {
-    const fetch = async () => {
-      const res = ((await VendorService.getAll()) as DomoDoc<Vendor>[]) ?? [];
+    const fetchAll = async () => {
+      const [vendorRes, foodRes, reviewRes] = await Promise.all([
+        VendorService.getAll(),
+        FoodService.getAll(),
+        ReviewService.getAll(),
+      ]);
 
-      const flattened = res.map((v: any) => ({
+      // map foodId -> vendorId
+      const foodVendorMap = (foodRes as any[]).reduce((acc: any, f: any) => {
+        acc[f.content.id] = f.content.vendorId;
+        return acc;
+      }, {});
+
+      // count reviews per vendor
+      const vendorReviewCount = (reviewRes as any[]).reduce(
+        (acc: any, r: any) => {
+          const foodId = r.content.foodId;
+          const vendorId = foodVendorMap[foodId];
+
+          if (vendorId) {
+            acc[vendorId] = (acc[vendorId] || 0) + 1;
+          }
+
+          return acc;
+        },
+        {},
+      );
+
+      // vendors
+      const flattened = (vendorRes as any[]).map((v: any) => ({
         docId: v.id,
         ...v.content,
       }));
 
-      const top: any = flattened.filter((v: any) => v.isTopChoice === "true");
+      const top = flattened
+        .filter((v: any) => v.isTopChoice === "true")
+        .map((v: any) => ({
+          ...v,
+          reviews: vendorReviewCount[v.id] || 0,
+        }));
 
       setVendors(top);
     };
 
-    fetch();
+    fetchAll();
   }, []);
+
+  console.log(vendors,"features vendor");
+
   return (
     <section className="container mx-auto px-4 py-16">
       <div className="flex items-center justify-between mb-12">
@@ -56,7 +93,7 @@ export default function Features() {
             transition={{ delay: index * 0.1 }}
             viewport={{ once: true }}
           >
-            <Link to={`/vendor/${restaurant.id}`}>
+            <Link to={`/vendor/${restaurant.docId}`}>
               <Card className="group overflow-hidden border-primary/10 hover:border-primary/30 transition-all hover:shadow-xl hover:shadow-primary/20">
                 <div className="relative aspect-4/3 overflow-hidden">
                   <img

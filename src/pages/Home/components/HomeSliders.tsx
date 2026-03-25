@@ -25,8 +25,7 @@ export default function HomeSliders() {
           ...item.content,
         }));
 
-        console.log(flattened,"flattened");
-        
+        console.log(flattened, "flattened");
 
         // only show slider items
         const sliderFoods = flattened.filter((f) => f.isShowAsSlide === "true");

@@ -11,11 +11,15 @@ export const {
 
 export const selectCartItems = (state: RootState) => state.cart.items;
 
-export const selectCartCount = (state: RootState) => state.cart.items.length;
-
 export const selectCartTotal = (state: RootState) =>
   state.cart.items.reduce(
     (acc: number, item: { price: any; quantity: number }) =>
       acc + Number(item.price) * item.quantity,
     0,
+  );
+
+  export const selectCartCount = (state: any) =>
+  state.cart.items.reduce(
+    (sum: number, item: any) => sum + item.quantity,
+    0
   );

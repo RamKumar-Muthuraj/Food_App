@@ -7,27 +7,47 @@ import { Link } from "react-router";
 import { Card } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import { FoodService } from "@/service/food.service";
-import { Food } from "@/types/Food.types";
+import { Food, Review } from "@/types/Food.types";
+import { VendorService } from "@/service/vendor.service";
+import { Vendor } from "@/types/Vendor.types";
+import { ReviewService } from "@/service/review.service";
 type DomoDoc<T> = { id: string; content: T };
 export default function ChefRecommendations() {
   const [foods, setFoods] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchFoods = async () => {
-      const res = ((await FoodService.getAll()) as DomoDoc<Food>[]) ?? [];
+    const fetchAll = async () => {
+      const [foodsRes, vendorsRes, reviewsRes] = await Promise.all([
+        FoodService.getAll(),
+        VendorService.getAll(),
+        ReviewService.getAll(),
+      ]);
 
-      const flattened = res.map((f: any) => ({
-        docId: f.id,
-        ...f.content,
-      }));
+      const vendorMap = (vendorsRes as any[]).reduce((acc: any, v: any) => {
+        acc[v.id] = v.content.rating;
+        return acc;
+      }, {});
 
-      const chef = flattened.filter((f: any) => f.isChefRecommended === "true");
+      const reviewMap = (reviewsRes as any[]).reduce((acc: any, r: any) => {
+        const foodId = r.content.foodId;
+        acc[foodId] = (acc[foodId] || 0) + 1;
+        return acc;
+      }, {});
 
-      setFoods(chef);
+      const foods = (foodsRes as any[])
+        .map((f: any) => ({
+          ...f.content,
+          rating: vendorMap[f.content.vendorId] || 0,
+          reviews: reviewMap[f.content.id] || 0,
+        }))
+        .filter((f: any) => f.isChefRecommended === "true");
+
+      setFoods(foods);
     };
 
-    fetchFoods();
+    fetchAll();
   }, []);
+
   return (
     <section className="container mx-auto px-4 py-16">
       <div className="text-center mb-12">
@@ -49,7 +69,7 @@ export default function ChefRecommendations() {
             transition={{ delay: index * 0.1 }}
             viewport={{ once: true }}
           >
-            <Link to={`/food/${food.id}`}>
+            <Link to={`/food/${food.docId}`}>
               <Card className="group overflow-hidden border-primary/10 hover:border-primary/30 transition-all hover:shadow-xl hover:shadow-primary/20">
                 <div className="relative aspect-square overflow-hidden">
                   <img
@@ -58,7 +78,7 @@ export default function ChefRecommendations() {
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                   <Badge className="absolute top-4 left-4 bg-linear-to-r from-primary to-accent">
-                    {food.badge}
+                    {food.category}
                   </Badge>
                   {food.isVeg && (
                     <div className="absolute top-4 right-4 w-6 h-6 border-2 border-accent rounded flex items-center justify-center bg-background/80">
