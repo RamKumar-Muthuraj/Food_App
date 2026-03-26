@@ -136,9 +136,11 @@
       "schema":{
         "columns": [
           {"name": "id", "type":"STRING"},
-          {"name": "email", "type":"STRING"}
+          {"name": "email", "type":"STRING"},
+          {"name": "createAt", "type":"STRING"}
         ]
-      }
+      },
+       "syncEnabled": true
     }
   ],
   "workflowMapping": [],
