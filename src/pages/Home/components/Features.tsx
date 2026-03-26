@@ -15,55 +15,53 @@ type DomoDoc<T> = { id: string; content: T };
 export default function Features() {
   const [vendors, setVendors] = useState<Vendor[]>([]);
 
-  useEffect(() => {
-    const fetchAll = async () => {
-      const [vendorRes, foodRes, reviewRes] = await Promise.all([
-        VendorService.getAll(),
-        FoodService.getAll(),
-        ReviewService.getAll(),
-      ]);
+ useEffect(() => {
+  const fetchAll = async () => {
+    const [vendorRes, foodRes, reviewRes] = await Promise.all([
+      VendorService.getAll(),
+      FoodService.getAll(),
+      ReviewService.getAll(),
+    ]);
 
-      // map foodId -> vendorId
-      const foodVendorMap = (foodRes as any[]).reduce((acc: any, f: any) => {
-        acc[f.content.id] = f.content.vendorId;
+    // map foodId -> vendorId
+    const foodVendorMap = (foodRes as any[]).reduce((acc: any, f: any) => {
+      acc[f.content.id] = f.content.vendorId;
+      return acc;
+    }, {});
+
+    // count reviews per vendor
+    const vendorReviewCount = (reviewRes as any[]).reduce(
+      (acc: any, r: any) => {
+        const foodId = r.content.foodId;
+        const vendorId = foodVendorMap[foodId];
+
+        if (vendorId) {
+          acc[vendorId] = (acc[vendorId] || 0) + 1;
+        }
+
         return acc;
-      }, {});
+      },
+      {}
+    );
 
-      // count reviews per vendor
-      const vendorReviewCount = (reviewRes as any[]).reduce(
-        (acc: any, r: any) => {
-          const foodId = r.content.foodId;
-          const vendorId = foodVendorMap[foodId];
+    // vendors
+    const flattened = (vendorRes as any[]).map((v: any) => ({
+      docId: v.id,
+      ...v.content,
+    }));
 
-          if (vendorId) {
-            acc[vendorId] = (acc[vendorId] || 0) + 1;
-          }
-
-          return acc;
-        },
-        {},
-      );
-
-      // vendors
-      const flattened = (vendorRes as any[]).map((v: any) => ({
-        docId: v.id,
-        ...v.content,
+    const top = flattened
+      .filter((v: any) => v.isTopChoice === "true")
+      .map((v: any) => ({
+        ...v,
+        reviews: vendorReviewCount[v.docId] || 0,
       }));
 
-      const top = flattened
-        .filter((v: any) => v.isTopChoice === "true")
-        .map((v: any) => ({
-          ...v,
-          reviews: vendorReviewCount[v.id] || 0,
-        }));
+    setVendors(top);
+  };
 
-      setVendors(top);
-    };
-
-    fetchAll();
-  }, []);
-
-  console.log(vendors,"features vendor");
+  fetchAll();
+}, []);
 
   return (
     <section className="container mx-auto px-4 py-16">

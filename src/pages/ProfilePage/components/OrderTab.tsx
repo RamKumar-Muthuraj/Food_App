@@ -52,7 +52,7 @@ export function OrdersTab({ orders, loading }: OrdersTabProps) {
       )}
 
       {!loading && orders.length > 0 && (
-        <div className="space-y-3">
+       <div className="max-h-[65vh] overflow-y-auto pr-2 space-y-3 scroll-smooth .custom-scroll">
           {orders.map((order, index) => (
             <motion.div key={order.docId}
               initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}

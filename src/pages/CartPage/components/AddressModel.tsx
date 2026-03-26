@@ -1,4 +1,5 @@
 import { AddressService } from "@/service/address.service";
+import { validateAddress } from "@/utils/validation/Address.validation";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -22,6 +23,7 @@ export default function AddressModal({
 
   const [form, setForm] = useState<any>(blank);
   const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState<any>({});
 
   useEffect(() => {
     setForm(editingAddress ? { ...editingAddress } : blank);
@@ -31,6 +33,12 @@ export default function AddressModal({
     setForm((p: any) => ({ ...p, [e.target.name]: e.target.value }));
 
   const handleSave = async () => {
+    const validation = validateAddress(form);
+
+    if (Object.keys(validation).length > 0) {
+      setErrors(validation);
+      return;
+    }
     setSaving(true);
 
     const payload = { ...form, userId: currentUserId };
@@ -130,6 +138,10 @@ export default function AddressModal({
                              focus:border-yellow-400
                              outline-none transition"
                 />
+
+                {errors[f.name] && (
+                  <p className="text-xs text-red-400">{errors[f.name]}</p>
+                )}
               </div>
             ))}
 

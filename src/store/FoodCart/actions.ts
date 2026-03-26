@@ -7,6 +7,7 @@ export const {
   increaseQuantity,
   decreaseQuantity,
   clearCart,
+  setCartItems,
 } = cartSlice.actions;
 
 export const selectCartItems = (state: RootState) => state.cart.items;
@@ -18,8 +19,5 @@ export const selectCartTotal = (state: RootState) =>
     0,
   );
 
-  export const selectCartCount = (state: any) =>
-  state.cart.items.reduce(
-    (sum: number, item: any) => sum + item.quantity,
-    0
-  );
+export const selectCartCount = (state: RootState) =>
+  state.cart.items.reduce((sum: number, item: any) => sum + item.quantity, 0);

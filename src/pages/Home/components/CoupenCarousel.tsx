@@ -1,8 +1,4 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { coupons } from "@/data/mockData";
-import { motion } from "framer-motion";
+import { Badge, Button, Card, coupons, Input, motion } from "@/shared";
 
 export default function CoupenCarousel() {
   return (

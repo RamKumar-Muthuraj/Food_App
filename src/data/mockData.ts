@@ -6,6 +6,7 @@ export const CollectionName = {
   FOODAPP_ADDRESSES: "FoodApp_UserAddresses",
   FOODAPP_REVIEWS: "FoodApp_Reviews",
   FOODAPP_CART: "FoodApp_Cart",
+  NEWSELTTER: "NewSeltter",
 } as const;
 
 export const ProviderName = {

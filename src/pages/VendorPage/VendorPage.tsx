@@ -66,7 +66,6 @@ export default function VendorPage() {
           reviews: parseInt(f.content.reviews) || 0,
         }));
 
-          console.log(menu,"jdbkdn d");
 
       setVendor({
         ...v,
@@ -95,11 +94,6 @@ export default function VendorPage() {
   const chefPicks = vendor.menu.filter((item: any) => item.chefRecommended);
   const vegItems = vendor.menu.filter((item: any) => item.isVeg);
   const nonVegItems = vendor.menu.filter((item: any) => !item.isVeg);
-
-  console.log(vendor,"vendor data form vendor page");
-  console.log(chefPicks,"chefPicks");
-  console.log(vegItems,"vegItems");
-  console.log(nonVegItems, "nonevegIttems");
 
   return (
     <div className="min-h-screen">

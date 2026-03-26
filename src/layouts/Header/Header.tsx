@@ -14,8 +14,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCurrentUser } from "@/API/currentUserContext";
-import { selectCartCount } from "@/store/FoodCart/actions";
-import { useSelector } from "react-redux";
+import { selectCartCount, setCartItems } from "@/store/FoodCart/actions";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { FoodService } from "@/service/food.service";
 import { VendorService } from "@/service/vendor.service";
@@ -23,6 +23,7 @@ import { useDebounce } from "@/utils/useDebounce";
 import HeaderNav from "./components/HeaderNav";
 import { HeaderLogo } from "./components/HeaderLogo";
 import HeaderSearch from "./components/HeaderSearch";
+import { CartService } from "@/service/cart.service";
 
 export interface SearchResult {
   type: "food" | "vendor";
@@ -47,7 +48,8 @@ export function Header() {
   const debouncedQuery = useDebounce(query, 280);
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
+  const dispatch = useDispatch();
+  
   useEffect(() => {
     if (!debouncedQuery.trim()) {
       setResults([]);
@@ -129,6 +131,22 @@ export function Header() {
     setShowMega(false);
     setQuery("");
   }, [location.pathname]);
+
+
+  useEffect(() => {
+  const loadCart = async () => {
+    const res = await CartService.getAll();
+
+    const items = (res as any[]).map((c: any) => ({
+      ...c.content,
+      quantity: Number(c.content.quantity || 1),
+    }));
+
+    dispatch(setCartItems(items));
+  };
+
+  loadCart();
+}, []);
 
   const handleResultClick = (result: SearchResult) => {
     setShowMega(false);

@@ -22,7 +22,7 @@ export function ProfileSidebar({
   fullName, initials, photoURL, email, role, orderCount, deliveredCount, logout,
 }: ProfileSidebarProps) {
   return (
-    <Card className="p-4 sm:p-5 border-primary/10 lg:sticky lg:top-24">
+    <Card className="p-2 sm:p-3 border-primary/10 lg:sticky lg:top-24">
       {/* Avatar */}
       <div className="flex lg:flex-col items-center gap-4 lg:gap-0 mb-4 lg:mb-5 lg:text-center">
         <div className="relative shrink-0 lg:mb-3">

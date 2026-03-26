@@ -17,7 +17,7 @@ export default function CartItemCard({
     >
       <div
         className="bg-neutral-900 border border-white/10 rounded-2xl p-3 sm:p-4 
-flex flex-col sm:flex-row gap-3 sm:gap-4"
+flex flex-row gap-3 sm:gap-4"
       >
         {/* Image */}
         <div className="w-20 h-20 shrink-0 rounded-xl overflow-hidden">
@@ -29,7 +29,7 @@ flex flex-col sm:flex-row gap-3 sm:gap-4"
         </div>
 
         {/* Info */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1  w-full sm:min-w-0">
           <h3 className="font-semibold text-white truncate font-serif">
             {item.name}
           </h3>

@@ -18,8 +18,9 @@ import { AddressesTab, type NormalisedAddress } from "./components/AddressTab";
 import { PaymentTab } from "./components/PaymentTb";
 import { ProfileSidebar } from "./components/ProfileSidebar";
 import { ProfileTab } from "./components/ProfileTab";
+import { validateProfile } from "@/utils/validation/Profile.validation";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// ─── Types
 interface ProfileForm {
   firstName: string;
   lastName: string;
@@ -41,7 +42,7 @@ const safeParseJSON = (val: any): any => {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function ProfilePage() {
   const { currentUser, logout } = useCurrentUser();
-
+  const [errors, setErrors] = useState<any>({});
   const [dbUser, setDbUser] = useState<any>(null);
   const [userDocId, setUserDocId] = useState("");
   const [orders, setOrders] = useState<NormalisedOrder[]>([]);
@@ -58,53 +59,69 @@ export default function ProfilePage() {
     email: "",
     phone: "",
   });
+
   const [formDraft, setFormDraft] = useState<ProfileForm>({ ...form });
 
-  // ── Fetch user ──────────────────────────────────────────────────────────────
+  // ── Fetch user
   useEffect(() => {
     (async () => {
       try {
-        const providerId =
-          currentUser?.uid ??
-          currentUser?.providerId ??
-          currentUser?.providerData?.[0]?.uid;
         const res: any = await DomoApi.ListDocuments(
           CollectionName.FOODAPP_USERS,
         );
+
         const raw: any[] = Array.isArray(res) ? res : (res?.content ?? []);
+
+        const firebaseUid =
+          currentUser?.uid || currentUser?.providerId || currentUser?.userId;
+
         const matched = raw.find((u: any) => {
           const c = u?.content ?? u;
+
           return (
-            c?.providerId === providerId || c?.email === currentUser?.email
+            c?.userId === firebaseUid || // ✅ most important
+            c?.uid === firebaseUid ||
+            c?.providerId === firebaseUid ||
+            c?.email === currentUser?.email
           );
         });
+
         if (matched) {
           const c = matched?.content ?? matched;
+
           setDbUser(c);
           setUserDocId(matched?.id ?? c?.id ?? "");
+
           const f: ProfileForm = {
             firstName: c.firstName ?? "",
             lastName: c.lastName ?? "",
             email: c.email ?? "",
             phone: c.phone ?? "",
           };
+
           setForm(f);
           setFormDraft(f);
+        } else {
+          console.warn("User not found in DB");
         }
-      } catch {
+      } catch (e) {
+        console.error("User fetch error:", e);
+
+        // fallback
         const fallback: ProfileForm = {
           firstName: currentUser?.displayName?.split(" ")[0] ?? "User",
           lastName: currentUser?.displayName?.split(" ")[1] ?? "",
           email: currentUser?.email ?? "",
           phone: currentUser?.phoneNumber ?? "",
         };
+
         setForm(fallback);
         setFormDraft(fallback);
       }
     })();
   }, [currentUser]);
 
-  // ── Fetch addresses ─────────────────────────────────────────────────────────
+  // ── Fetch addresses
   useEffect(() => {
     if (!dbUser && !currentUser) return;
     (async () => {
@@ -140,7 +157,7 @@ export default function ProfilePage() {
     })();
   }, [dbUser, userDocId, currentUser]);
 
-  // ── Fetch orders ────────────────────────────────────────────────────────────
+  // ── Fetch orders
   useEffect(() => {
     (async () => {
       setOrdersLoading(true);
@@ -201,7 +218,7 @@ export default function ProfilePage() {
     })();
   }, [dbUser, userDocId, currentUser]);
 
-  // ── Edit handlers ───────────────────────────────────────────────────────────
+  // ── Edit handlers
   const handleEdit = () => {
     setFormDraft({ ...form });
     setEditing(true);
@@ -212,19 +229,33 @@ export default function ProfilePage() {
     setEditing(false);
   };
   const handleSave = async () => {
+    const validation = validateProfile(formDraft);
+
+    if (Object.keys(validation).length > 0) {
+      setErrors(validation);
+      return;
+    }
+
     setSaving(true);
+
     try {
-      await new Promise((r) => setTimeout(r, 600));
+      await DomoApi.UpdateDocument(CollectionName.FOODAPP_USERS, userDocId, {
+        ...dbUser,
+        ...formDraft,
+        updatedAt: new Date().toISOString(),
+      });
+
       setForm({ ...formDraft });
       setEditing(false);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
+    } catch (error) {
+      console.error("Profile update failed:", error);
     } finally {
       setSaving(false);
     }
   };
 
-  // ── Derived ─────────────────────────────────────────────────────────────────
   const totalSpent = orders.reduce(
     (acc, o) => acc + parseFloat(String(o.total) || "0"),
     0,
@@ -232,6 +263,7 @@ export default function ProfilePage() {
   const deliveredCount = orders.filter(
     (o) => o.status?.toLowerCase() === "delivered",
   ).length;
+
   const fullName = `${form.firstName} ${form.lastName}`.trim() || "User";
   const initials = fullName
     .split(" ")
@@ -239,10 +271,11 @@ export default function ProfilePage() {
     .join("")
     .toUpperCase()
     .slice(0, 2);
+    
   const photoURL = currentUser?.photoURL ?? currentUser?.avatar ?? "";
 
   return (
-    <div className="container mx-auto px-3 sm:px-4 py-5 sm:py-8 lg:py-10">
+    <div className="container mx-auto px-3 py-5 sm:py-8 lg:py-10">
       <motion.div
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -303,9 +336,11 @@ export default function ProfilePage() {
                 onEdit={handleEdit}
                 onCancel={handleCancel}
                 onSave={handleSave}
-                onDraftChange={(key, value) =>
-                  setFormDraft((p) => ({ ...p, [key]: value }))
-                }
+                onDraftChange={(key, value) => {
+                  setFormDraft((p) => ({ ...p, [key]: value }));
+                  setErrors((e: any) => ({ ...e, [key]: "" }));
+                }}
+                errors={errors}
               />
             </TabsContent>
 

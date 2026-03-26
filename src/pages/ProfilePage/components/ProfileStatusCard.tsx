@@ -1,6 +1,6 @@
 import { Input, Label } from "@/shared";
 
-// ─── StatCard ─────────────────────────────────────────────────────────────────
+// ─── StatCard 
 export function StatCard({
   icon: Icon, label, value, accent = false,
 }: { icon: any; label: string; value: string | number; accent?: boolean }) {
@@ -21,12 +21,12 @@ export function StatCard({
   );
 }
 
-// ─── FieldRow ─────────────────────────────────────────────────────────────────
+// ─── FieldRow 
 export function FieldRow({
-  id, label, icon: Icon, value, editing, onChange, type = "text",
+  id, label, icon: Icon, value, editing, onChange, type = "text", error
 }: {
   id: string; label: string; icon: any; value: string;
-  editing: boolean; onChange: (v: string) => void; type?: string;
+  editing: boolean; onChange: (v: string) => void; type?: string; error?:string
 }) {
   return (
     <div className="space-y-1.5">
@@ -41,6 +41,11 @@ export function FieldRow({
             onChange={(e) => onChange(e.target.value)}
             className="pl-9 bg-background/50 border-primary/20 focus:border-primary text-sm h-9"
           />
+          {error && (
+  <p className="text-xs text-red-500 mt-1">
+    {error}
+  </p>
+)}
         </div>
       ) : (
         <div className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-muted/30 border border-border/50">

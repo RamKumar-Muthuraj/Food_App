@@ -37,8 +37,6 @@ export default function AdminFoods() {
     },
   ];
 
-  console.log(vendors,"jdkhjvdhkjb hb");
-
   const columns: Column<Food>[] = [
     { header: "ID", accessor: "id" },
     {
