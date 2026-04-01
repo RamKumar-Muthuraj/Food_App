@@ -108,7 +108,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
       <div className="relative container mx-auto px-4">
         {/* ── Newsletter ── */}
-        <div className="relative -mt-8 mb-14 mx-auto max-w-4xl">
+        <div className="relative mt-3 mb-14 mx-auto max-w-4xl">
           <div className="rounded-3xl bg-linear-to-br from-primary/15 via-accent/10 to-primary/5 border border-primary/20 p-6 sm:p-10 text-center shadow-xl shadow-primary/5 backdrop-blur-sm">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
               <Sparkles className="w-3 h-3 text-primary" />

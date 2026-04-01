@@ -157,14 +157,15 @@ export default function FoodDetailPage() {
         </motion.nav>
 
         {/* Main content */}
-        <DisplayFood
-          food={food}
-          reviews={reviews}
-          relatedFoods={relatedFoods}
-          vendor={vendor}
-          quantity={quantity}
-          setQuantity={setQuantity}
-        />
+       <DisplayFood
+  food={food}
+  reviews={reviews}
+  relatedFoods={relatedFoods}
+  vendor={vendor}
+  quantity={quantity}
+  setQuantity={setQuantity}
+  refreshReviews={() => fetchReviewData(food.id)}
+/>
 
         {/* Related section */}
         <RelatedItems relatedFoods={relatedFoods} />

@@ -10,8 +10,12 @@ import {
   Leaf,
 } from "lucide-react";
 import React, { useState } from "react";
-import { Link } from "react-router";
-import { addToCart, selectCartItems } from "@/store/FoodCart/actions";
+import { Link, useNavigate } from "react-router";
+import {
+  addToCart,
+  increaseQuantity,
+  selectCartItems,
+} from "@/store/FoodCart/actions";
 import { useDispatch, useSelector } from "react-redux";
 import { useCurrentUser } from "@/API/currentUserContext";
 import { CartService } from "@/service/cart.service";
@@ -27,6 +31,7 @@ type DisplayFoodProps = {
   vendor: any;
   quantity: number;
   setQuantity: React.Dispatch<React.SetStateAction<number>>;
+  refreshReviews: () => void;
 };
 
 export default function DisplayFood({
@@ -36,14 +41,40 @@ export default function DisplayFood({
   vendor,
   quantity,
   setQuantity,
+  refreshReviews,
 }: DisplayFoodProps) {
   const dispatch = useDispatch();
   const cartItems = useSelector(selectCartItems);
   const isAlreadySelected = cartItems.some((item) => item.id === food.id);
   const { currentUserId } = useCurrentUser();
   const [openReview, setOpenReview] = useState(false);
+  const navigate = useNavigate();
 
   const handleAddToCart = async () => {
+    if (!currentUserId) {
+      navigate("/login");
+      return;
+    }
+
+    //fetch latest cart from DB
+    const res: any = await CartService.getAll();
+    const existing = res.find(
+      (c: any) =>
+        c.content.foodId === food.id && c.content.userId === currentUserId,
+    );
+
+    if (existing) {
+      await CartService.update(existing.id, {
+        ...existing.content,
+        quantity: Number(existing.content.quantity || 1) + quantity,
+      });
+
+      dispatch(increaseQuantity(existing.id));
+
+      return;
+    }
+
+    //else create new
     const payload = {
       userId: currentUserId,
       foodId: food.id,
@@ -54,13 +85,19 @@ export default function DisplayFood({
       quantity,
       createdAt: new Date().toISOString(),
     };
-    const res: any = await CartService.create(payload);
-    dispatch(addToCart({ docId: res.id, id: food.id, ...payload }));
+
+    const newDoc: any = await CartService.create(payload);
+    dispatch(addToCart({ docId: newDoc.id, id: food.id, ...payload }));
   };
 
   const filteredReviews = reviews.filter((r: any) => r.foodId === food.id);
 
   const handleSubmitReview = async (data: any) => {
+    if (!currentUserId) {
+      navigate("/login");
+      return;
+    }
+
     await ReviewService.create({
       id: crypto.randomUUID(),
       userId: currentUserId,
@@ -70,6 +107,7 @@ export default function DisplayFood({
       isHelpful: data.isHelpful,
       createdAt: new Date().toISOString(),
     });
+    refreshReviews();
     setOpenReview(false);
   };
 
@@ -261,7 +299,8 @@ export default function DisplayFood({
             {/* Add to Cart Button */}
             <motion.button
               whileTap={{ scale: 0.97 }}
-              onClick={handleAddToCart}
+              onClick={!isAlreadySelected ? handleAddToCart : undefined}
+              disabled={isAlreadySelected}
               className="w-full py-4 rounded-2xl text-base font-bold flex items-center justify-center gap-3 transition-all"
               style={
                 isAlreadySelected

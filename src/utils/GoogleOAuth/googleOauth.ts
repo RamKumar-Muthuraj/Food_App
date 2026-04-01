@@ -14,6 +14,7 @@ export const googleAuth = async () => {
     const existingUsers = (await DomoApi.ListDocuments(
       CollectionName.FOODAPP_USERS,
     )) as {
+      id: string;
       content: LoginFieldProps;
     }[];
 
@@ -39,12 +40,17 @@ export const googleAuth = async () => {
         newUser,
       );
 
-      localStorage.setItem("userData", JSON.stringify(response));
-      return response;
+      if (!response) return null;
+
+      const responseData = Array.isArray(response) ? response[0] : response;
+      localStorage.setItem("userData", JSON.stringify(responseData));
+      localStorage.setItem("userId", (responseData as any).id);
+      return responseData;
     }
 
-    localStorage.setItem("userData", JSON.stringify(existingUser));
-    return existingUser;
+    localStorage.setItem("userData", JSON.stringify(existingUser.content));
+    localStorage.setItem("userId", existingUser.id);
+    return existingUser.content;
   } catch (error) {
     console.error("Google login error", error);
     return null;

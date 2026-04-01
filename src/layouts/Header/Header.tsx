@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCurrentUser } from "@/API/currentUserContext";
-import { selectCartCount, setCartItems } from "@/store/FoodCart/actions";
+import { selectCartCountByUser, setCartItems } from "@/store/FoodCart/actions";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { FoodService } from "@/service/food.service";
@@ -37,9 +37,12 @@ export interface SearchResult {
 export function Header() {
   const location = useLocation();
   const navigate = useNavigate();
-  const cartItemsCount = useSelector(selectCartCount);
-  const { logout, role, currentUser } = useCurrentUser();
 
+  const { logout, role, currentUser, currentUserId } = useCurrentUser();
+  
+  const cartItemsCount = useSelector(
+  selectCartCountByUser(currentUserId)
+);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -49,7 +52,7 @@ export function Header() {
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
     if (!debouncedQuery.trim()) {
       setResults([]);
@@ -132,21 +135,28 @@ export function Header() {
     setQuery("");
   }, [location.pathname]);
 
-
   useEffect(() => {
-  const loadCart = async () => {
-    const res = await CartService.getAll();
+    if (!currentUserId) {
+      dispatch(setCartItems([]));
+      return;
+    }
 
-    const items = (res as any[]).map((c: any) => ({
-      ...c.content,
-      quantity: Number(c.content.quantity || 1),
-    }));
+    const loadCart = async () => {
+      const res = await CartService.getAll();
 
-    dispatch(setCartItems(items));
-  };
+      const items = (res as any[])
+        .map((c: any) => ({
+          docId: c.id,
+          ...c.content,
+          quantity: Number(c.content.quantity || 1),
+        }))
+        .filter((i) => i.userId === currentUserId);
 
-  loadCart();
-}, []);
+      dispatch(setCartItems(items));
+    };
+
+    loadCart();
+  }, [currentUserId]);
 
   const handleResultClick = (result: SearchResult) => {
     setShowMega(false);
@@ -244,7 +254,7 @@ export function Header() {
                 className="relative hover:bg-primary/10 w-9 h-9"
               >
                 <ShoppingCart className="w-4 h-4" />
-                {cartItemsCount > 0 && (
+                {currentUserId && cartItemsCount > 0 && (
                   <Badge className="absolute -top-1 -right-1 w-4 h-4 flex items-center justify-center p-0 bg-primary text-primary-foreground text-[10px]">
                     {cartItemsCount}
                   </Badge>

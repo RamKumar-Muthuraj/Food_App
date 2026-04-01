@@ -38,7 +38,7 @@
           { "name": "id", "type": "STRING" },
           { "name": "userId", "type": "STRING" },
           { "name": "vendorId", "type": "STRING" },
-          { "name": "addressId", "type":"STRING"},
+          { "name": "addressId", "type": "STRING" },
           { "name": "items", "type": "STRING" },
           { "name": "totalAmount", "type": "STRING" },
           { "name": "status", "type": "STRING" },
@@ -117,7 +117,7 @@
       "syncEnabled": true
     },
     {
-      "name": "FoodApp_Cart",
+      "name": "FoodApp_CartData",
       "schema": {
         "columns": [
           { "name": "id", "type": "STRING" },
@@ -133,14 +133,14 @@
     },
     {
       "name": "NewSeltter",
-      "schema":{
+      "schema": {
         "columns": [
-          {"name": "id", "type":"STRING"},
-          {"name": "email", "type":"STRING"},
-          {"name": "createAt", "type":"STRING"}
+          { "name": "id", "type": "STRING" },
+          { "name": "email", "type": "STRING" },
+          { "name": "createAt", "type": "STRING" }
         ]
       },
-       "syncEnabled": true
+      "syncEnabled": true
     }
   ],
   "workflowMapping": [],

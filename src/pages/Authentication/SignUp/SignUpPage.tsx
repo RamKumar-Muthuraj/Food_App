@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import bcrypt from "bcryptjs";
 import { AuthRole, CollectionName, ProviderName } from "@/data/mockData";
 import { googleAuth } from "@/utils/GoogleOAuth/googleOauth";
+import { useCurrentUser } from "@/API/currentUserContext";
 
 export function SignUpPage() {
   const [formData, setFormData] = useState<LoginFieldProps>({
@@ -32,6 +33,7 @@ export function SignUpPage() {
   });
 
   const [errors, setErrors] = useState<SignUpErrors>({});
+  const { refreshUser } = useCurrentUser();
   const navigate = useNavigate();
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,6 +100,7 @@ export function SignUpPage() {
 
   const handleGoogleSignUp = async () => {
     const user = await googleAuth();
+    refreshUser()
     if (user) navigate("/");
   };
 

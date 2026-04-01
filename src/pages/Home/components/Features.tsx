@@ -63,6 +63,8 @@ export default function Features() {
   fetchAll();
 }, []);
 
+console.log(vendors);
+
   return (
     <section className="container mx-auto px-4 py-16">
       <div className="flex items-center justify-between mb-12">
@@ -100,7 +102,7 @@ export default function Features() {
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                   <Badge className="absolute top-4 left-4 bg-linear-to-r from-primary to-accent">
-                    {restaurant.cuisine}
+                    {restaurant.type}
                   </Badge>
                 </div>
                 <div className="p-4">
@@ -108,7 +110,7 @@ export default function Features() {
                     {restaurant.name}
                   </h3>
                   <p className="text-muted-foreground text-sm mb-3">
-                    {restaurant.cuisine}
+                    {restaurant.location}
                   </p>
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-1">

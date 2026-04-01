@@ -5,10 +5,15 @@ interface ParsedItem  { name: string; price: number; quantity: number; image?: s
 interface ParsedAddress { street: string; city: string; state: string; zip: string; country?: string }
 
 export interface NormalisedOrder {
-  id: string; docId: string; restaurant: string;
-  items: ParsedItem[]; itemCount: number;
-  total: string | number; status: string; date: string;
-  address?: ParsedAddress | null; vendorId?: string;
+  id: string;
+  docId: string;
+  restaurant: string;
+  items: ParsedItem[];
+  itemCount: number;
+  total: string | number;
+  status: string;
+  date: string;
+  address?: ParsedAddress | null;
 }
 
 const statusStyle: Record<string, string> = {

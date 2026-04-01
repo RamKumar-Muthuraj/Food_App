@@ -5,7 +5,7 @@ export const CollectionName = {
   FOODAPP_FOODS: "FoodApp_Foods",
   FOODAPP_ADDRESSES: "FoodApp_UserAddresses",
   FOODAPP_REVIEWS: "FoodApp_Reviews",
-  FOODAPP_CART: "FoodApp_Cart",
+  FOODAPP_CART: "FoodApp_CartData",
   NEWSELTTER: "NewSeltter",
 } as const;
 

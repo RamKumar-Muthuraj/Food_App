@@ -41,10 +41,8 @@ const safeParseJSON = (val: any): any => {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function ProfilePage() {
-  const { currentUser, logout } = useCurrentUser();
+  const { currentUser, currentUserId, logout, role } = useCurrentUser();
   const [errors, setErrors] = useState<any>({});
-  const [dbUser, setDbUser] = useState<any>(null);
-  const [userDocId, setUserDocId] = useState("");
   const [orders, setOrders] = useState<NormalisedOrder[]>([]);
   const [addresses, setAddresses] = useState<NormalisedAddress[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
@@ -64,159 +62,126 @@ export default function ProfilePage() {
 
   // ── Fetch user
   useEffect(() => {
-    (async () => {
-      try {
-        const res: any = await DomoApi.ListDocuments(
-          CollectionName.FOODAPP_USERS,
-        );
+    if (!currentUser) return;
 
-        const raw: any[] = Array.isArray(res) ? res : (res?.content ?? []);
+    const f = {
+      firstName: currentUser.firstName ?? "",
+      lastName: currentUser.lastName ?? "",
+      email: currentUser.email ?? "",
+      phone: currentUser.phone ?? "",
+    };
 
-        const firebaseUid =
-          currentUser?.uid || currentUser?.providerId || currentUser?.userId;
-
-        const matched = raw.find((u: any) => {
-          const c = u?.content ?? u;
-
-          return (
-            c?.userId === firebaseUid || // ✅ most important
-            c?.uid === firebaseUid ||
-            c?.providerId === firebaseUid ||
-            c?.email === currentUser?.email
-          );
-        });
-
-        if (matched) {
-          const c = matched?.content ?? matched;
-
-          setDbUser(c);
-          setUserDocId(matched?.id ?? c?.id ?? "");
-
-          const f: ProfileForm = {
-            firstName: c.firstName ?? "",
-            lastName: c.lastName ?? "",
-            email: c.email ?? "",
-            phone: c.phone ?? "",
-          };
-
-          setForm(f);
-          setFormDraft(f);
-        } else {
-          console.warn("User not found in DB");
-        }
-      } catch (e) {
-        console.error("User fetch error:", e);
-
-        // fallback
-        const fallback: ProfileForm = {
-          firstName: currentUser?.displayName?.split(" ")[0] ?? "User",
-          lastName: currentUser?.displayName?.split(" ")[1] ?? "",
-          email: currentUser?.email ?? "",
-          phone: currentUser?.phoneNumber ?? "",
-        };
-
-        setForm(fallback);
-        setFormDraft(fallback);
-      }
-    })();
+    setForm(f);
+    setFormDraft(f);
   }, [currentUser]);
 
   // ── Fetch addresses
-  useEffect(() => {
-    if (!dbUser && !currentUser) return;
-    (async () => {
-      setAddressesLoading(true);
-      try {
-        const res: any = await AddressService.getAll();
-        const raw: any[] = Array.isArray(res) ? res : (res?.content ?? []);
-        const normalised: NormalisedAddress[] = raw.map((a: any) => {
-          const c = a?.content ?? a;
-          return {
-            docId: a.id ?? c.id,
-            street: c.street ?? "",
-            city: c.city ?? "",
-            state: c.state ?? "",
-            zip: c.zip ?? "",
-            country: c.country ?? "",
-            isDefault: c.isDefault === true || c.isDefault === "true",
-            userId: c.userId ?? "",
-            id: c.id ?? a.id ?? "",
-          };
-        });
-        const userId = userDocId || dbUser?.id;
-        const filtered = userId
-          ? normalised.filter((a) => a.userId === userId)
-          : normalised;
-        filtered.sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
-        setAddresses(filtered);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setAddressesLoading(false);
-      }
-    })();
-  }, [dbUser, userDocId, currentUser]);
+useEffect(() => {
+  if (!currentUserId) return;
+
+  const fetchAddresses = async () => {
+    setAddressesLoading(true);
+
+    try {
+      const res: any = await DomoApi.QueryDocument(
+        CollectionName.FOODAPP_ADDRESSES,
+        {
+          "content.userId": currentUserId,
+        }
+      );
+
+      //  parsing
+      const raw = Array.isArray(res) ? res : [];
+
+      const normalised = raw.map((a: any) => {
+        const c = a.content || {};
+
+        return {
+          docId: a.id,
+          id: c.id || a.id,
+          street: c.street || "",
+          city: c.city || "",
+          state: c.state || "",
+          zip: c.zip || "",
+          country: c.country || "",
+          isDefault: c.isDefault === true || c.isDefault === "true",
+          userId: c.userId || "",
+        };
+      });
+
+      setAddresses(normalised);
+
+    } catch (error) {
+      console.error(error);
+      setAddresses([]);
+    } finally {
+      setAddressesLoading(false);
+    }
+  };
+
+  fetchAddresses();
+}, [currentUserId]);
+  console.log("Addresses:", addresses);
 
   // ── Fetch orders
   useEffect(() => {
-    (async () => {
+    if (!currentUserId) return;
+
+    const fetchOrders = async () => {
       setOrdersLoading(true);
+
       try {
-        const res: any = await OrderService.getAll();
-        const raw: any[] = Array.isArray(res) ? res : (res?.content ?? []);
-        const normalised: NormalisedOrder[] = raw.map((o: any) => {
-          const c = o?.content ?? o;
-          const rawItems = safeParseJSON(c.items) ?? [];
-          const parsedItems = Array.isArray(rawItems)
-            ? rawItems.map((i: any) => ({
-                name: i.name ?? "Item",
-                price: parseFloat(i.price) || 0,
-                quantity: parseInt(i.quantity) || 1,
-                image: i.image ?? "",
-              }))
-            : [];
+        const res = await DomoApi.QueryDocument(CollectionName.FOODAPP_ORDERS, {
+          "content.userId": currentUserId,
+        });
+
+        const raw = Array.isArray(res) ? res : [];
+
+        const normalised = raw.map((o: any) => {
+          const c = o.content || {};
+
+          let items = [];
+          try {
+            items =
+              typeof c.items === "string" ? JSON.parse(c.items) : c.items || [];
+          } catch {
+            items = [];
+          }
+
+          let address = null;
+          try {
+            address =
+              typeof c.address === "string"
+                ? JSON.parse(c.address)
+                : c.address || null;
+          } catch {
+            address = null;
+          }
+
           return {
-            id: `#${(c.id ?? o.id ?? "").slice(0, 8).toUpperCase()}`,
-            docId: o.id ?? c.id,
-            restaurant: c.restaurantName ?? c.vendorName ?? "Restaurant",
-            items: parsedItems,
-            itemCount: parsedItems.length,
-            total: c.totalAmount ?? c.total ?? "0",
-            status: c.status ?? "pending",
-            date: c.createdAt
-              ? new Date(c.createdAt).toLocaleDateString("en-IN", {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                })
-              : "—",
-            address: safeParseJSON(c.address),
-            vendorId: c.vendorId ?? "",
+            id: `#${o.id.slice(0, 6)}`,
+            docId: o.id,
+            restaurant: c.vendorName || "Restaurant",
+            items,
+            itemCount: items.length,
+            total: c.totalAmount || "0",
+            status: c.status || "PLACED",
+            date: c.createdAt ? new Date(c.createdAt).toLocaleDateString() : "",
+            address,
+            vendorId: c.vendorId || "",
           };
         });
-        const userId = userDocId || dbUser?.id;
-        const firebaseUid = currentUser?.uid ?? currentUser?.providerId;
-        const filtered = userId
-          ? normalised.filter((o) => {
-              const rawEntry = raw.find(
-                (r: any) => (r.id ?? (r.content ?? r).id) === o.docId,
-              );
-              const oc = rawEntry?.content ?? rawEntry ?? {};
-              return (
-                oc?.userId === userId ||
-                oc?.customerId === userId ||
-                oc?.uid === firebaseUid
-              );
-            })
-          : normalised;
-        setOrders(filtered.length ? filtered : normalised);
-      } catch (e) {
-        console.error(e);
+
+        setOrders(normalised);
+      } catch (error) {
+        console.error(error);
       } finally {
         setOrdersLoading(false);
       }
-    })();
-  }, [dbUser, userDocId, currentUser]);
+    };
+
+    fetchOrders();
+  }, [currentUserId]);
 
   // ── Edit handlers
   const handleEdit = () => {
@@ -239,11 +204,15 @@ export default function ProfilePage() {
     setSaving(true);
 
     try {
-      await DomoApi.UpdateDocument(CollectionName.FOODAPP_USERS, userDocId, {
-        ...dbUser,
-        ...formDraft,
-        updatedAt: new Date().toISOString(),
-      });
+      await DomoApi.UpdateDocument(
+        CollectionName.FOODAPP_USERS,
+        currentUserId,
+        {
+          ...currentUser,
+          ...formDraft,
+          updatedAt: new Date().toISOString(),
+        },
+      );
 
       setForm({ ...formDraft });
       setEditing(false);
@@ -271,7 +240,7 @@ export default function ProfilePage() {
     .join("")
     .toUpperCase()
     .slice(0, 2);
-    
+
   const photoURL = currentUser?.photoURL ?? currentUser?.avatar ?? "";
 
   return (
@@ -297,7 +266,7 @@ export default function ProfilePage() {
             initials={initials}
             photoURL={photoURL}
             email={form.email}
-            role={dbUser?.role}
+            role={role}
             orderCount={orders.length}
             deliveredCount={deliveredCount}
             logout={logout}
@@ -329,7 +298,7 @@ export default function ProfilePage() {
                 editing={editing}
                 saving={saving}
                 saved={saved}
-                authProvider={dbUser?.authProvider}
+                authProvider={currentUser?.authProvider}
                 orderCount={orders.length}
                 deliveredCount={deliveredCount}
                 totalSpent={totalSpent}

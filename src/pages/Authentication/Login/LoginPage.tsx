@@ -19,6 +19,7 @@ import { LoginFieldProps } from "@/types/Login.types";
 import bcrypt from "bcryptjs";
 import { AuthRole, CollectionName, ProviderName } from "@/data/mockData";
 import { googleAuth } from "@/utils/GoogleOAuth/googleOauth";
+import { useCurrentUser } from "@/API/currentUserContext";
 
 export type LoginFormProps = {
   email: string;
@@ -32,6 +33,7 @@ export function LoginPage() {
   });
 
   const [errors, setErrors] = useState<LoginErrors>({});
+  const { refreshUser } = useCurrentUser();
   const navigate = useNavigate();
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,6 +58,7 @@ export function LoginPage() {
     const users = (await DomoApi.ListDocuments(
       CollectionName.FOODAPP_USERS,
     )) as {
+      id: string;
       content: LoginFieldProps;
     }[];
 
@@ -78,11 +81,14 @@ export function LoginPage() {
     }
 
     localStorage.setItem("userData", JSON.stringify(user));
+    localStorage.setItem("userId", user.id);
+    refreshUser();
     navigate("/");
   };
 
 const handleGoogleLogin = async () => {
   const user = await googleAuth();
+  refreshUser();
   if (user) navigate("/");
 };
 

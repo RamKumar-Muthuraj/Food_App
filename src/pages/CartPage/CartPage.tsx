@@ -10,6 +10,7 @@ import {
   increaseQuantity,
   removeFromCart,
   selectCartItems,
+  setCartItems,
 } from "@/store/FoodCart/actions";
 import { CartService } from "@/service/cart.service";
 import { CollectionName } from "@/shared";
@@ -59,7 +60,7 @@ export default function CartPage() {
         createdAt: doc.content.createdAt,
       }))
       .filter((item: any) => item.userId === currentUserId);
-    mapped.forEach((item: any) => dispatch(addToCart(item)));
+    dispatch(setCartItems(mapped));
   };
 
   const loadAddresses = async () => {
@@ -80,6 +81,10 @@ export default function CartPage() {
   }, [currentUserId]);
 
   const handleSubmitOrder = async () => {
+    if (!currentUserId) {
+      alert("Please login first");
+      return;
+    }
     await OrderService.create({
       id: crypto.randomUUID(),
       userId: currentUserId,
@@ -103,7 +108,7 @@ export default function CartPage() {
       ...item,
       quantity: item.quantity + 1,
     });
-    dispatch(increaseQuantity(item.id));
+    dispatch(increaseQuantity(item.docId));
   };
 
   const handleDecrease = async (item: any) => {
@@ -112,19 +117,19 @@ export default function CartPage() {
       ...item,
       quantity: item.quantity - 1,
     });
-    dispatch(decreaseQuantity(item.id));
+    dispatch(decreaseQuantity(item.docId));
   };
 
   const handleRemove = async (item: any) => {
+    dispatch(removeFromCart(item.docId));
     await CartService.delete(item.docId);
-    dispatch(removeFromCart(item.id));
   };
 
   const isEmpty = cartItems.length === 0;
 
   return (
     <div className="min-h-screen" style={{ background: "oklch(0.12 0 0)" }}>
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
+      <div className="container mx-auto px-4 py-2 max-w-5xl">
         {/* Page Header */}
         <motion.div
           initial={{ opacity: 0, y: -16 }}
@@ -180,11 +185,11 @@ export default function CartPage() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
             {/* LEFT – ITEMS */}
-            <div className="space-y-3">
+            <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
               <AnimatePresence>
                 {cartItems.map((item: any) => (
                   <CartItemCard
-                    key={item.id}
+                    key={item.docId}
                     item={item}
                     onIncrease={handleIncrease}
                     onDecrease={handleDecrease}

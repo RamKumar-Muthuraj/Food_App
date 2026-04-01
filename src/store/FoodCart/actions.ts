@@ -12,12 +12,10 @@ export const {
 
 export const selectCartItems = (state: RootState) => state.cart.items;
 
-export const selectCartTotal = (state: RootState) =>
-  state.cart.items.reduce(
-    (acc: number, item: { price: any; quantity: number }) =>
-      acc + Number(item.price) * item.quantity,
-    0,
-  );
-
 export const selectCartCount = (state: RootState) =>
   state.cart.items.reduce((sum: number, item: any) => sum + item.quantity, 0);
+
+export const selectCartCountByUser = (userId: string) => (state: RootState) =>
+  state.cart.items
+    .filter((i) => i.userId === userId)
+    .reduce((sum, item) => sum + item.quantity, 0);

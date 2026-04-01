@@ -30,13 +30,13 @@ export function AddressesTab({ addresses, loading }: AddressesTabProps) {
             Your saved delivery locations
           </p>
         </div>
-        <Button
+        {/* <Button
           size="sm"
           className="bg-linear-to-r from-primary to-accent hover:opacity-90 gap-1.5 text-xs shrink-0"
         >
           <Plus className="w-3.5 h-3.5" />
           <span className="hidden xs:inline">Add New</span>
-        </Button>
+        </Button> */}
       </div>
 
       {loading && (
@@ -80,7 +80,7 @@ export function AddressesTab({ addresses, loading }: AddressesTabProps) {
                   >
                     {addr.isDefault ? "🏠 Default" : `Address ${index + 1}`}
                   </Badge>
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  {/* <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button
                       variant="ghost"
                       size="icon"
@@ -95,7 +95,7 @@ export function AddressesTab({ addresses, loading }: AddressesTabProps) {
                     >
                       <Trash2 className="w-3 h-3" />
                     </Button>
-                  </div>
+                  </div> */}
                 </div>
                 <div className="flex items-start gap-2 sm:gap-2.5">
                   <span className="w-7 h-7 rounded-lg bg-primary/10 border border-primary/15 flex items-center justify-center shrink-0 mt-0.5">

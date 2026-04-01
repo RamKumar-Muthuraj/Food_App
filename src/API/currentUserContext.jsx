@@ -56,47 +56,46 @@ export const UserContext = createContext();
 // };
 
 export const UserProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
   const [currentUserId, setCurrentUserId] = useState("");
-  // const [avatarKey, setAvatarKey] = useState("");
-  // const [customer, setCustomer] = useState("");
-  // const [host, setHost] = useState("");
   const [role, setRole] = useState("");
 
+  const fetchUser = async (id) => {
+    try {
+      const res = await DomoApi.GetDocument(
+        CollectionName.FOODAPP_USERS,
+        id
+      );
+
+      const user = res?.content;
+
+      setCurrentUser(user);
+      setCurrentUserId(res?.id);
+      setRole(user?.role || AuthRole.USER);
+    } catch (error) {
+      console.error("User fetch failed", error);
+    }
+  };
+
   useEffect(() => {
-    let isUserFetched = false;
-    const data = localStorage.getItem("userData");
-    const userData = JSON.parse(data);
+    const userId = localStorage.getItem("userId");
+    if (!userId) return;
 
-    if (!userData) return;
-
-    DomoApi.GetDocument(CollectionName.FOODAPP_USERS, userData.id).then(
-      (data) => {
-        if (!isUserFetched) {
-          const userId = data?.id;
-          const displayName = data?.content.firstName;
-          const lastName = data?.content.lastName;
-          const role = data?.content.role;
-
-          setCurrentUser(displayName || "");
-          setCurrentUserId(userId || "");
-          setRole(role || AuthRole.USER);
-          // setAvatarKey(avatarKey || "");
-          // setCustomer(customer || "");
-          // setHost(host || "");
-
-          isUserFetched = true;
-        }
-      },
-    );
-
-    return () => {
-      isUserFetched = true;
-    };
+    fetchUser(userId);
   }, []);
 
+  const refreshUser = () => {
+    const userId = localStorage.getItem("userId");
+    if (userId) fetchUser(userId);
+  };
+
   const logout = () => {
-    localStorage.removeItem("userData");
+    localStorage.clear();
+
+    setCurrentUser(null);
+    setCurrentUserId("");
+    setRole("");
+
     window.location.href = "/login";
   };
 
@@ -105,11 +104,9 @@ export const UserProvider = ({ children }) => {
       value={{
         currentUser,
         currentUserId,
-        // avatarKey,
-        // customer,
-        // host,
         role,
         logout,
+        refreshUser,  
       }}
     >
       {children}
